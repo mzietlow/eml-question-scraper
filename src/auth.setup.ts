@@ -26,19 +26,20 @@ async function authenticateManually(page: Page) {
   console.log("Log yourself in!");
 
   // Wait until the page reaches a state where all cookies are set.
-  await expect(
-    page.getByRole("heading", { name: `Hallo, ${constants.FULL_NAME}! 👋` })
-  ).toBeVisible({ timeout: 100000 });
+
+  await expect(page.getByRole("link", { name: "Login" })).toHaveCount(0, {
+    timeout: 100000,
+  });
 }
 
 function addMathjaxPlainSourceCookie(context: BrowserContext) {
+  // Without the PlanSource-Cookie, mathjax parsing is more unreliable.
   context.addCookies([
     {
       name: "mjx.menu",
       value: "renderer%3APlainSource",
       domain: "moodle.fernuni-hagen.de",
       path: "/",
-      expires: new Date("9999-01-01T00:00:00Z").getTime(), // i.e. don't expire
       httpOnly: false,
       secure: false,
       sameSite: "Lax",

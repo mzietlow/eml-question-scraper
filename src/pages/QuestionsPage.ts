@@ -3,10 +3,7 @@ import test, { Locator, type Page, expect } from "@playwright/test";
 import { constants } from "../../constants";
 
 export class QuestionsPage {
-  private readonly mathjaxPlainSourceRegex =
-    /<span class="MathJax_PlainSource".*?>(.*?)<\/span>/g;
-  private readonly mathjaxPreviewRegex =
-    /<span class="MathJax_Preview".*?>(.*?)<\/span>/g;
+  private readonly mathjaxRegex = /<span class="MathJax.*?>(.*?)<\/span>/g;
   private readonly mathjaxMjxp = /<span class="MJXp-.*?>(.*?)<\/span>/g;
   private readonly mathjaxScriptRegex =
     /<script type="math\/tex".*?>(.*?)<\/script>/g;
@@ -56,9 +53,9 @@ export class QuestionsPage {
     this.writeQuestionsToFileSystem(outputFileName, questions);
   }
 
-  async createAllTests() {
+  private async createAllTests() {
     let submittedTestCount = await this.submittedTests.count();
-    while (submittedTestCount < constants.NUMBER_OF_TESTS_PER_CATEGORY) {
+    while (submittedTestCount < constants.NUMBER_OF_TESTS_PER_QUIZ) {
       await this.CreateOrOpenTest();
       await this.versuchAbschließen.click();
       await this.testAbgeben.click();
@@ -72,12 +69,12 @@ export class QuestionsPage {
       await this.page.waitForLoadState("load");
       submittedTestCount = await this.submittedTests.count();
       console.log(
-        `Created ${submittedTestCount}/${constants.NUMBER_OF_TESTS_PER_CATEGORY} test sheets`
+        `Created ${submittedTestCount}/${constants.NUMBER_OF_TESTS_PER_QUIZ} test sheets`
       );
     }
   }
 
-  async CreateOrOpenTest() {
+  private async CreateOrOpenTest() {
     await this.page.waitForLoadState("load");
     if (await this.testWiederholen.isVisible()) {
       await this.testWiederholen.click();
@@ -86,7 +83,7 @@ export class QuestionsPage {
     }
   }
 
-  async getUniqueQuestionsFromAllTests() {
+  private async getUniqueQuestionsFromAllTests() {
     const testSheetCount = await this.submittedTests.count();
 
     const allQuestions = [] as string[];
@@ -109,7 +106,7 @@ export class QuestionsPage {
     return uniqueQuestions;
   }
 
-  async getQuestionsFromCurrentPage(): Promise<string[]> {
+  private async getQuestionsFromCurrentPage(): Promise<string[]> {
     const questionWrappers = this.page.locator(".que");
     await this.page.waitForLoadState("networkidle");
     await expect(questionWrappers.nth(1)).toBeVisible();
@@ -119,11 +116,7 @@ export class QuestionsPage {
       const questionText = await this.parseQuestionHtml(questionWrapper); // replace multiple blank spaces
       const answerText = await questionWrapper.locator(".feedback").innerText();
 
-      allQuestions.push(
-        constants.TO_ANKI_CLOZE
-          ? `${questionText}\n{{c1::${answerText}::Ist die Aussage richtig oder falsch?}}`
-          : `${questionText}\n${answerText}`
-      );
+      allQuestions.push(this.postprocessQuestion(questionText, answerText));
     }
 
     return allQuestions;
@@ -135,18 +128,43 @@ export class QuestionsPage {
 
     let questionText = questionHtml.replaceAll("&nbsp;", " ");
     questionText = questionText.replaceAll(this.mathjaxScriptRegex, `\$$$1\$`);
-    questionText = questionText.replaceAll(this.mathjaxPlainSourceRegex, "");
+
+    // remove all other mathjax elements
+    questionText = questionText.replaceAll(this.mathjaxRegex, "");
     questionText = questionText.replaceAll(this.mathjaxMjxp, "");
-    questionText = questionText.replaceAll(this.mathjaxPreviewRegex, "");
-    questionText = questionText.replaceAll(" $ ", "$ "); // LaTeX Umgebungen mit doppeltem Abstand (bisher nur am Ende)
+
+    // Repair faulty mathjax environments
+    questionText = questionText.replaceAll(" $ ", "$ ");
+
+    // Fix italics
     questionText = questionText.replaceAll(this.emRegex, "*$1* ");
+
+    // Drop all other html tags
     questionText = questionText.replaceAll(this.htmlRegex, "");
-    questionText = questionText.replaceAll(/\s{2,}/g, " "); // replace multiple blank spaces
+
+    // Replace multiple blank spaces with single blank spaces
+    questionText = questionText.replaceAll(/\s{2,}/g, " ");
 
     return questionText;
   }
 
-  writeQuestionsToFileSystem(fileName: string, questions: string[]) {
+  private postprocessQuestion(
+    questionText: string,
+    answerText: string
+  ): string {
+    if (constants.TO_ANKI_CLOZE) {
+      return `${questionText}\n{{c1::${answerText}::Ist die Aussage richtig oder falsch?}}`;
+    }
+
+    if (constants.TO_OBSIDIAN_CLOZE) {
+      return `<!-- clozeblock-start -->\n${questionText}\n{{c1::${answerText}::Ist die Aussage richtig oder falsch?}}\n<!-- clozeblock-end -->`;
+    }
+
+    // else
+    return `${questionText}\n${answerText}`;
+  }
+
+  private writeQuestionsToFileSystem(fileName: string, questions: string[]) {
     fs.writeFileSync(fileName, questions.join("\n\n"));
   }
 }

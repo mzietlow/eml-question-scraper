@@ -6,7 +6,7 @@ test("Markov Entscheidungsprozesse", async ({ page }) => {
 
   await questionsPage.execute(
     "https://moodle.fernuni-hagen.de/mod/quiz/view.php?id=79770",
-    "Wissensfragen - Markov Entscheidungsprozesse.txt"
+    "Wissensfragen - Markov Entscheidungsprozesse.md"
   );
 });
 
@@ -15,7 +15,7 @@ test("Passives Reinforcement Learning", async ({ page }) => {
 
   await questionsPage.execute(
     "https://moodle.fernuni-hagen.de/mod/quiz/view.php?id=79780",
-    "Wissensfragen - Passives Reinforcement Learning.txt"
+    "Wissensfragen - Passives Reinforcement Learning.md"
   );
 });
 
@@ -24,6 +24,6 @@ test("Aktives Reinforcement Learning", async ({ page }) => {
 
   await questionsPage.execute(
     "https://moodle.fernuni-hagen.de/mod/quiz/view.php?id=79790",
-    "Wissensfragen - Aktives Reinforcement Learning.txt"
+    "Wissensfragen - Aktives Reinforcement Learning.md"
   );
 });

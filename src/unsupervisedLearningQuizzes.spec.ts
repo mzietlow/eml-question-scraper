@@ -6,7 +6,7 @@ test("K-Means Clustering", async ({ page }) => {
 
   await questionsPage.execute(
     "https://moodle.fernuni-hagen.de/mod/quiz/view.php?id=79713",
-    "Wissensfragen - K-Means Clustering.txt"
+    "Wissensfragen - K-Means Clustering.md"
   );
 });
 
@@ -15,7 +15,7 @@ test("Hierarchisches Clustering", async ({ page }) => {
 
   await questionsPage.execute(
     "https://moodle.fernuni-hagen.de/mod/quiz/view.php?id=79726",
-    "Wissensfragen - Hierarchisches Clustering.txt"
+    "Wissensfragen - Hierarchisches Clustering.md"
   );
 });
 
@@ -24,7 +24,7 @@ test("Assoziationsregellernen", async ({ page }) => {
 
   await questionsPage.execute(
     "https://moodle.fernuni-hagen.de/mod/quiz/view.php?id=79737",
-    "Wissensfragen - Assoziationsregellernen.txt"
+    "Wissensfragen - Assoziationsregellernen.md"
   );
 });
 
@@ -33,7 +33,7 @@ test("Anomalieerkennung", async ({ page }) => {
 
   await questionsPage.execute(
     "https://moodle.fernuni-hagen.de/mod/quiz/view.php?id=79743",
-    "Wissensfragen - Anomalieerkennung.txt"
+    "Wissensfragen - Anomalieerkennung.md"
   );
 });
 
@@ -42,6 +42,6 @@ test("Hauptkomponentenanalyse", async ({ page }) => {
 
   await questionsPage.execute(
     "https://moodle.fernuni-hagen.de/mod/quiz/view.php?id=79758",
-    "Wissensfragen - Hauptkomponentenanalyse.txt"
+    "Wissensfragen - Hauptkomponentenanalyse.md"
   );
 });
