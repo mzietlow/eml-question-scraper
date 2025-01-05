@@ -1,28 +1,28 @@
 import { test } from "@playwright/test";
-import { QuestionsPage } from "./pages/QuestionsPage";
+import { QuizzPage } from "./pages/QuizzPage";
 
 test("Markov Entscheidungsprozesse", async ({ page }) => {
-  const questionsPage = new QuestionsPage(page);
+  const QuizzPage = new QuizzPage(page);
 
-  await questionsPage.execute(
+  await QuizzPage.execute(
     "https://moodle.fernuni-hagen.de/mod/quiz/view.php?id=79770",
     "Wissensfragen - Markov Entscheidungsprozesse.md"
   );
 });
 
 test("Passives Reinforcement Learning", async ({ page }) => {
-  const questionsPage = new QuestionsPage(page);
+  const QuizzPage = new QuizzPage(page);
 
-  await questionsPage.execute(
+  await QuizzPage.execute(
     "https://moodle.fernuni-hagen.de/mod/quiz/view.php?id=79780",
     "Wissensfragen - Passives Reinforcement Learning.md"
   );
 });
 
 test("Aktives Reinforcement Learning", async ({ page }) => {
-  const questionsPage = new QuestionsPage(page);
+  const QuizzPage = new QuizzPage(page);
 
-  await questionsPage.execute(
+  await QuizzPage.execute(
     "https://moodle.fernuni-hagen.de/mod/quiz/view.php?id=79790",
     "Wissensfragen - Aktives Reinforcement Learning.md"
   );

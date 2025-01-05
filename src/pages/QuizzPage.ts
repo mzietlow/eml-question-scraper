@@ -2,7 +2,7 @@ import * as fs from "fs";
 import test, { Locator, type Page, expect } from "@playwright/test";
 import { constants } from "../../constants";
 
-export class QuestionsPage {
+export class QuizzPage {
   private readonly mathjaxRegex = /<span class="MathJax.*?>(.*?)<\/span>/g;
   private readonly mathjaxMjxp = /<span class="MJXp-.*?>(.*?)<\/span>/g;
   private readonly mathjaxScriptRegex =
