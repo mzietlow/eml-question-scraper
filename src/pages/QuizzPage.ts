@@ -133,17 +133,26 @@ export class QuizzPage {
     questionText = questionText.replaceAll(this.mathjaxRegex, "");
     questionText = questionText.replaceAll(this.mathjaxMjxp, "");
 
-    // Repair faulty mathjax environments
-    questionText = questionText.replaceAll(" $ ", "$ ");
-
     // Fix italics
-    questionText = questionText.replaceAll(this.emRegex, "*$1* ");
+    questionText = questionText.replaceAll(this.emRegex, "*$1*");
+    questionText = questionText.replaceAll(/\textit\{(.*?)\}/g, "*$1*"); // replace latex \textit with markdown italics
+    questionText = questionText.replaceAll(/\* \./g, " "); // fix italics at the end of a sentence
 
     // Drop all other html tags
     questionText = questionText.replaceAll(this.htmlRegex, "");
 
     // Replace multiple blank spaces with single blank spaces
     questionText = questionText.replaceAll(/\s{2,}/g, " ");
+
+    // Repair faulty mathjax environments
+    questionText = questionText.replaceAll(/\s\$\s([\w])/g, "$ $$1"); // e.g. "[...] ist gegeben durch $ (I * K)$ [...]"
+    questionText = questionText.replaceAll(/[\w]\s\$\s/g, "$$1 $"); // e.g. "[...] ist gegeben durch $(I * K) $ [...]"
+    questionText = questionText.replaceAll(/[.]\s\$/g, "$."); // e.g. $x^2. $ -> $x^2$.
+    questionText = questionText.replaceAll(/\s\$[.]/g, "$."); // e.g. $x^2 $. -> $x^2$.
+    questionText = questionText.replaceAll("\\Tilde", "\\tilde"); // \Tilde does not exist in MathJax
+
+    questionText = questionText.replaceAll(/\\glqq /g, '"'); // e.g. $x^2. $ -> $x^2$.
+    questionText = questionText.replaceAll(/\\grqq\\\s/g, '" '); // e.g. $x^2. $ -> $x^2$.
 
     return questionText;
   }
