@@ -12,7 +12,7 @@ export class QuizzPage {
 
   private readonly htmlRegex = /<\/?[^>]+(>|$)/g;
 
-  private readonly submittedTests: Locator;
+  private readonly submittedTestLinks: Locator;
   private readonly überprüfungBeenden: Locator;
   private readonly testAbgeben: Locator;
   private readonly antwortenAbsenden: Locator;
@@ -26,8 +26,8 @@ export class QuizzPage {
     test.setTimeout(1000_000);
 
     this.page = page;
-    this.submittedTests = this.page.getByRole("row", {
-      name: "Beendet",
+    this.submittedTestLinks = this.page.getByRole("link", {
+      name: "Überprüfung",
     });
     this.überprüfungBeenden = this.page.getByRole("link", {
       name: "Überprüfung beenden",
@@ -58,7 +58,7 @@ export class QuizzPage {
   }
 
   private async createAllTests() {
-    let submittedTestCount = await this.submittedTests.count();
+    let submittedTestCount = await this.submittedTestLinks.count();
     while (submittedTestCount < constants.NUMBER_OF_TESTS_PER_QUIZ) {
       await this.CreateOrOpenTest();
       await this.versuchAbschließen.click();
@@ -71,7 +71,7 @@ export class QuizzPage {
       await this.überprüfungBeenden.first().click();
 
       await this.page.waitForLoadState("load");
-      submittedTestCount = await this.submittedTests.count();
+      submittedTestCount = await this.submittedTestLinks.count();
       console.log(
         `Created ${submittedTestCount}/${constants.NUMBER_OF_TESTS_PER_QUIZ} test sheets`
       );
@@ -90,14 +90,14 @@ export class QuizzPage {
   }
 
   private async getUniqueQuestionsFromAllTests() {
-    const testSheetCount = await this.submittedTests.count();
+    const testSheetCount = await this.submittedTestLinks.count();
 
     const allQuestions = [] as string[];
-    for (const [i, submittedTest] of (
-      await this.submittedTests.all()
+    for (const [i, submittedTestLink] of (
+      await this.submittedTestLinks.all()
     ).entries()) {
       // Open new test-page
-      await submittedTest.getByRole("link").click();
+      await submittedTestLink.click();
 
       const questionsFromCurrentPage = await this.getQuestionsFromCurrentPage();
       allQuestions.push(...questionsFromCurrentPage);
