@@ -18,6 +18,7 @@ export class QuizzPage {
   private readonly antwortenAbsenden: Locator;
   private readonly testWiederholen: Locator;
   private readonly versuchFortsetzen: Locator;
+  private readonly testVersuchen: Locator;
   private readonly versuchAbschließen: Locator;
 
   constructor(public readonly page: Page) {
@@ -26,7 +27,7 @@ export class QuizzPage {
 
     this.page = page;
     this.submittedTests = this.page.getByRole("row", {
-      name: "Beendet Abgegeben",
+      name: "Beendet",
     });
     this.überprüfungBeenden = this.page.getByRole("link", {
       name: "Überprüfung beenden",
@@ -37,6 +38,9 @@ export class QuizzPage {
     });
     this.versuchFortsetzen = this.page.getByRole("button", {
       name: "Versuch fortsetzen",
+    });
+    this.testVersuchen = this.page.getByRole("button", {
+      name: "Test versuchen",
     });
     this.versuchAbschließen = this.page.getByRole("link", {
       name: "Versuch abschließen",
@@ -80,6 +84,8 @@ export class QuizzPage {
       await this.testWiederholen.click();
     } else if (await this.versuchFortsetzen.isVisible()) {
       await this.versuchFortsetzen.click();
+    } else if (await this.testVersuchen.isVisible()) {
+      await this.testVersuchen.click();
     }
   }
 
