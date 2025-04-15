@@ -167,7 +167,7 @@ export class QuizzPage {
     questionText: string,
     answerText: string
   ): string {
-    if (constants.TO_ANKI_CLOZE) {
+    if (constants.TO_PLAIN_CLOZE) {
       return `${questionText}\n{{c1::${answerText}::Ist die Aussage richtig oder falsch?}}`;
     }
 
